@@ -1,15 +1,15 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.example.peter.myuatest_android"
+//        applicationId "com.example.peter.myuatest_android"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+//        versionCode 1
+//        versionName "1.0"
     }
     buildTypes {
         release {
@@ -17,6 +17,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {
@@ -26,3 +28,19 @@ dependencies {
     compile 'com.android.support:design:23.2.0'
     compile files('src/main/libs/classes.jar')
 }
+
+// 移除舊的 jar 檔
+task deleteOldJar(type: Delete) {
+    delete 'release/AndroidPlugin.jar'
+}
+
+// 匯出 jar 檔
+task exportJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('release/')
+    include('classes.jar')
+    // 將匯出的 jar 檔重新命名
+    rename('classes.jar', 'AndroidPlugin.jar')
+}
+
+exportJar.dependsOn(deleteOldJar, build)
